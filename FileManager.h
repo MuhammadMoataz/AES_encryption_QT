@@ -12,7 +12,7 @@ class FileManager : public QObject
     QML_ELEMENT
 public:
     explicit FileManager(QObject *parent = nullptr);
-    Q_INVOKABLE QByteArray readFile();
+    Q_INVOKABLE QByteArray readFile(QString filePath);
 signals:
 };
 

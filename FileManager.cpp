@@ -4,9 +4,9 @@ FileManager::FileManager(QObject *parent)
     : QObject{parent}
 {}
 
-QByteArray FileManager::readFile()
+QByteArray FileManager::readFile(QString filePath)
 {
-    QString filePath = "C:/Users/moham/OneDrive/Desktop/new.txt"; // Replace with your file path
+    filePath = filePath.last(filePath.size() - 8);
     QFile file(filePath);
 
     if (!file.open(QIODevice::ReadOnly)) {

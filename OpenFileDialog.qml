@@ -20,7 +20,7 @@ FileDialog {
         save.enabled = true
         console.log("selected file " + openFileDialog.selectedFile)
         // call the encryption / decryption method according to the flag
-        fileManager.readFile()
+        fileManager.readFile(openFileDialog.selectedFile)
     }
 
     FileManager {
