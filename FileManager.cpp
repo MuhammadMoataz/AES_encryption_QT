@@ -1,12 +1,18 @@
 #include "FileManager.h"
 
 FileManager::FileManager(QObject *parent)
-    : QObject{parent}
+    : QObject{parent}, ext{""}
 {}
 
 QByteArray FileManager::readFile(QString filePath)
 {
     filePath = filePath.last(filePath.size() - 8);
+    QFileInfo fileInfo(filePath);
+    ext = fileInfo.suffix();
+    size = fileInfo.size();
+    path = fileInfo.absoluteFilePath();
+
+
     QFile file(filePath);
 
     if (!file.open(QIODevice::ReadOnly)) {
@@ -17,7 +23,6 @@ QByteArray FileManager::readFile(QString filePath)
     QByteArray fileContent = file.readAll();
     file.close();
 
-    qDebug() << "File size:" << fileContent.size() << "bytes";
-    qDebug() << "File Contents " << fileContent;
+    qDebug() << "File size: " << size << "File path " << path << "File ext " << ext;
     return fileContent;
 }

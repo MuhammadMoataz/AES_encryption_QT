@@ -34,8 +34,12 @@ set_target_properties(appuntitled PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
+include(FindOpenSSL)
+
 target_link_libraries(appuntitled
     PRIVATE Qt6::Quick Qt6::Core Qt6::QuickControls2
+    OpenSSL::SSL
+    OpenSSL::Crypto
 )
 
 include(GNUInstallDirs)
