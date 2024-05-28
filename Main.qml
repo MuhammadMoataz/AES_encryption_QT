@@ -69,6 +69,7 @@ ApplicationWindow {
             }
             onClicked: {
                 encryptFlag = false
+                openFileDialog.nameFilters = ["Enc files (*.enc)"]
                 openFileDialog.open()
 
             }
@@ -102,11 +103,19 @@ ApplicationWindow {
 
         OpenFileDialog {
             id: openFileDialog
+            nameFilters: {
+
+                ["Text files (*.txt)"]
+            }
             onAccepted: {
                 save.enabled = true
                 console.log("selected file " + openFileDialog.selectedFile)
                 // call the encryption / decryption method according to the flag
-                encryptManager.encrypt(fileManager.readFile(openFileDialog.selectedFile), "password")
+                var file = fileManager.readFile(openFileDialog.selectedFile)
+                if (encryptFlag)
+                    encryptManager.encryptAES(file, "password")
+                else
+                    encryptManager.decryptAES(file, "password")
             }
         }
 
