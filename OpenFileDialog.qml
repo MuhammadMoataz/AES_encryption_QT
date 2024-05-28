@@ -1,24 +1,30 @@
 import QtQuick
 import QtQuick.Dialogs
+import untitled
 
-Item {
-    id: root
+
+
+
+FileDialog {
+    id: openFileDialog
 
     property string path
     property string size
     property string name
 
-    FileDialog {
-        id: openFileDialog
-        acceptLabel: "Select"
-        nameFilters: ["Text files (*.txt)"]
-        title: "Select File"
+    acceptLabel: "Select"
+    nameFilters: ["Text files (*.txt)"]
+    title: "Select File"
 
-        onAccepted: {
-            save.enabled = true
-            console.log("selected file " + openFileDialog.selectedFile)
-            // call the encryption / decryption method according to the flag
-        }
-
+    onAccepted: {
+        save.enabled = true
+        console.log("selected file " + openFileDialog.selectedFile)
+        // call the encryption / decryption method according to the flag
+        fileManager.readFile()
     }
+
+    FileManager {
+        id: fileManager
+    }
+
 }

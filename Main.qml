@@ -7,6 +7,7 @@ import untitled
 
 
 ApplicationWindow {
+    id: root
     visible: true
     title: qsTr("Ur Encryptor")
     width: 400
@@ -99,20 +100,24 @@ ApplicationWindow {
 
         }
 
-
-        FileDialog {
+        OpenFileDialog {
             id: openFileDialog
-            acceptLabel: "Select"
-            nameFilters: ["Text files (*.txt)"] //TODO add AES filter
-            title: "Select File"
-
-            onAccepted: {
-                save.visible = true
-                console.log("selected file " + openFileDialog.selectedFile)
-                // call the encryption / decryption method according to the flag
-            }
 
         }
+
+        // FileDialog {
+        //     id: openFileDialog
+        //     acceptLabel: "Select"
+        //     nameFilters: ["Text files (*.txt)"]
+        //     title: "Select File"
+
+        //     onAccepted: {
+        //         save.enabled = true
+        //         console.log("selected file " + openFileDialog.selectedFile)
+        //         // call the encryption / decryption method according to the flag
+        //     }
+
+        // }
 
         FileDialog {
             id: saveFileDialog

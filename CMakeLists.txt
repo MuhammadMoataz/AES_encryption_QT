@@ -4,7 +4,7 @@ project(untitled VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.2 REQUIRED COMPONENTS Quick Core)
+find_package(Qt6 6.2 REQUIRED COMPONENTS Quick Core Gui QuickControls2)
 
 qt_standard_project_setup()
 
@@ -19,6 +19,8 @@ qt_add_qml_module(appuntitled
     Main.qml
     QML_FILES OpenFileDialog.qml
     QML_FILES PasswordField.qml
+    SOURCES EncDec.h EncDec.cpp
+    SOURCES FileManager.h FileManager.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -33,7 +35,7 @@ set_target_properties(appuntitled PROPERTIES
 )
 
 target_link_libraries(appuntitled
-    PRIVATE Qt6::Quick Qt6::Core
+    PRIVATE Qt6::Quick Qt6::Core Qt6::QuickControls2
 )
 
 include(GNUInstallDirs)
