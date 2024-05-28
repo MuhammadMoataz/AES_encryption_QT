@@ -12,7 +12,7 @@ ApplicationWindow {
     title: qsTr("Ur Encryptor")
     width: 400
     height: 300
-    color: "black"
+    // color: "black"
 
     property bool encryptFlag: true
 
@@ -83,7 +83,7 @@ ApplicationWindow {
             Layout.minimumWidth: 80
             Layout.preferredWidth: 100
             Layout.maximumWidth: 300
-            visible: false
+            enabled: false
             topPadding: 20
             bottomPadding: 20
             leftPadding: 16
@@ -102,28 +102,25 @@ ApplicationWindow {
 
         OpenFileDialog {
             id: openFileDialog
-
+            onAccepted: {
+                save.enabled = true
+                console.log("selected file " + openFileDialog.selectedFile)
+                // call the encryption / decryption method according to the flag
+                encryptManager.encrypt(fileManager.readFile(openFileDialog.selectedFile), "password")
+            }
         }
 
-        // FileDialog {
-        //     id: openFileDialog
-        //     acceptLabel: "Select"
-        //     nameFilters: ["Text files (*.txt)"]
-        //     title: "Select File"
-
-        //     onAccepted: {
-        //         save.enabled = true
-        //         console.log("selected file " + openFileDialog.selectedFile)
-        //         // call the encryption / decryption method according to the flag
-        //     }
-
-        // }
 
         FileDialog {
             id: saveFileDialog
             acceptLabel: "Save"
             fileMode: FileDialog.SaveFile
             title: "Save Output file"
+        }
+
+
+        FileManager {
+            id: fileManager
         }
 
     }
@@ -143,6 +140,7 @@ ApplicationWindow {
         }
 
     }
+
 
 
 

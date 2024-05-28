@@ -30,7 +30,7 @@ Item {
                 id: floatingLabel
                 text: "Password"
                 font.pixelSize: 18
-                color: "lightgreen"
+                color: "grey"
                 anchors.bottom: borderRect.top
                 anchors.bottomMargin: -10
                 anchors.left: borderRect.left
@@ -55,7 +55,7 @@ Item {
                 anchors.bottom: parent.top
                 anchors.bottomMargin: -10
                 font.pixelSize: 12
-                color: "blue"
+                color: "black"
                 opacity: 1.0
             }
         }

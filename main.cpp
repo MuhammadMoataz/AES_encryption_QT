@@ -1,12 +1,16 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
+#include <QQmlContext>
+#include "EncryptManager.h"
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
     // QQuickStyle::setStyle("Fusion");
     QQmlApplicationEngine engine;
+    EncryptManager *encryptManager = new EncryptManager(&app);
+    engine.rootContext()->setContextProperty("encryptManager", encryptManager);
     const QUrl url(QStringLiteral("qrc:/untitled/Main.qml"));
     QObject::connect(
         &engine,

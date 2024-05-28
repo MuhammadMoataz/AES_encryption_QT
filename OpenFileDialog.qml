@@ -4,7 +4,6 @@ import untitled
 
 
 
-
 FileDialog {
     id: openFileDialog
 
@@ -16,15 +15,15 @@ FileDialog {
     nameFilters: ["Text files (*.txt)"]
     title: "Select File"
 
-    onAccepted: {
-        save.enabled = true
-        console.log("selected file " + openFileDialog.selectedFile)
-        // call the encryption / decryption method according to the flag
-        fileManager.readFile(openFileDialog.selectedFile)
-    }
+
 
     FileManager {
         id: fileManager
+    }
+
+
+    EncryptManager {
+        id: aes
     }
 
 }
