@@ -10,9 +10,8 @@ ApplicationWindow {
     id: root
     visible: true
     title: qsTr("Ur Encryptor")
-    width: 400
+    width: 600
     height: 300
-    // color: "black"
 
     property bool encryptFlag: true
 
@@ -142,17 +141,54 @@ ApplicationWindow {
     }
 
 
-    RowLayout {
+    ColumnLayout {
         id: passwordLayout
         width: parent.width - 40
-        anchors.margins: 50
+        anchors.margins: 20
         anchors.top: buttonsLayout.bottom
         anchors.horizontalCenter: buttonsLayout.horizontalCenter
-        spacing: 10
+        spacing: 8
 
         PasswordField {
             id: password
+            width: parent.width
+            // Lay
+            // Layout.alignment: parent.alignment
+            // anchors.horizontalCenter: parent.horizontalCenter
             Layout.fillWidth: true
+        }
+
+
+        RowLayout {
+            id: passwordIndicator
+            spacing: 8
+            // anchors.left: password.left
+            Rectangle {
+                height: 2
+                Layout.fillWidth: true
+                color: "light grey"
+            }
+            Rectangle {
+                height: 2
+                Layout.fillWidth: true
+                color: "light grey"
+            }
+            Rectangle {
+                height: 2
+                Layout.fillWidth: true
+                color: "light grey"
+            }
+        }
+
+        Rectangle {
+            id: helperText
+            // anchors.left: passwordInputField.left
+            // anchors.leftMargin: 20
+            color: "red"
+            Text {
+                text: qsTr("At least 8 characters long, 1 upper and lower case letter, 1 number and 1 special character")
+            }
+
         }
 
     }
