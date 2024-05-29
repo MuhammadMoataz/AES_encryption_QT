@@ -13,6 +13,51 @@ TextField {
     leftPadding: 20
     height: 55
 
+    function passwordValidation(password) {
+
+        // check whether the password is cleared
+        if (password.length === 0) {
+            firstIndicator.color = "grey"
+            secondIndicator.color = "grey"
+            thirdIndicator.color = "grey"
+            helperText.text = "At least 8 characters long, 1 upper and lower case letter, 1 number and 1 special character"
+            helperText.color = "grey"
+            return
+        }
+
+        /* Using a regExp to validate the password input to match */
+        /* At least 8 Characters long, 1 upper and lower case letter, 1 number and 1 special character */
+
+
+        var regExp = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/
+        if (regExp.test(password)) {
+            // valid Password, Check for length 2nd Requirement
+
+            // Strong Password
+            if (password.length >= 15) {
+                firstIndicator.color = "green"
+                secondIndicator.color = "green"
+                thirdIndicator.color = "green"
+                helperText.text = "Strong"
+                helperText.color = "green"
+            } else if (password.length >= 10) {
+                firstIndicator.color = "orange"
+                secondIndicator.color = "orange"
+                thirdIndicator.color = "light grey"
+                helperText.text = "Okay"
+                helperText.color = "orange"
+            }
+
+
+        } else {
+            firstIndicator.color = "red"
+            secondIndicator.color = "light grey"
+            thirdIndicator.color = "light grey"
+            helperText.text = "Weak"
+            helperText.color = "red"
+        }
+    }
+
     background: Rectangle {
         id: borderRect
         implicitWidth: parent.width
@@ -45,7 +90,7 @@ TextField {
 
     states: State {
         name: "focused"
-        when: passwordField.focus || passwordField.text.length > 0
+        when: passwordField.focus || passwordField.length > 0
         PropertyChanges {
             target: floatingLabel
             anchors.verticalCenter: undefined
@@ -68,7 +113,9 @@ TextField {
     }
 
     onTextEdited: {
-        console.log("text changed")
+
+        passwordValidation(text)
+
     }
 }
 
