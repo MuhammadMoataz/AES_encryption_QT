@@ -35,6 +35,7 @@ ApplicationWindow {
             bottomPadding: 20
             leftPadding: 16
             rightPadding: 16
+            // enabled: false
             Text {
                 anchors.centerIn: parent
                 text: "Encrypt"
@@ -61,6 +62,7 @@ ApplicationWindow {
             bottomPadding: 20
             leftPadding: 16
             rightPadding: 16
+            // enabled: false
             Text {
                 anchors.centerIn: parent
                 text: "Decrypt"
@@ -108,14 +110,21 @@ ApplicationWindow {
                 ["Text files (*.txt)"]
             }
             onAccepted: {
-                save.enabled = true
                 console.log("selected file " + openFileDialog.selectedFile)
                 // call the encryption / decryption method according to the flag
                 var file = fileManager.readFile(openFileDialog.selectedFile)
-                if (encryptFlag)
-                    encryptManager.encryptAES(file, "password")
-                else
-                    encryptManager.decryptAES(file, "password")
+                if (encryptFlag) {
+                    encryptManager.encryptAES(file, password.text)
+                    save.enabled = true
+                }
+                else {
+                    if (encryptManager.decryptAES(file, password.text))
+                        save.enabled = true
+                    else {
+                        helperText.text = "Wrong Password!"
+                        helperText.color = "red"
+                    }
+                }
             }
         }
 
@@ -156,6 +165,16 @@ ApplicationWindow {
             // Layout.alignment: parent.alignment
             // anchors.horizontalCenter: parent.horizontalCenter
             Layout.fillWidth: true
+            onTextEdited: {
+
+                passwordValidation(text)
+
+                // if (passwordValidation(text)) {
+                //     encBut.enabled = true
+                //     decBut.enabled = true
+                // }
+
+            }
         }
 
 
