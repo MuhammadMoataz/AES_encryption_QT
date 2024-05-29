@@ -45,6 +45,7 @@ ApplicationWindow {
 
             onClicked: {
                 encryptFlag = true
+                openFileDialog.nameFilters = ["Text files (*.txt)"]
                 openFileDialog.open()
             }
 
@@ -125,6 +126,12 @@ ApplicationWindow {
             acceptLabel: "Save"
             fileMode: FileDialog.SaveFile
             title: "Save Output file"
+            onAccepted: {
+                var fullPath = selectedFile.toString()
+                var path = fullPath.replace(/^(file:\/{3})/,"")
+                encryptManager.saveTempFile(path)
+                save.enabled = false
+            }
         }
 
 

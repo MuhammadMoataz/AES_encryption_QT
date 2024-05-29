@@ -17,6 +17,7 @@ Item {
         rightPadding: 20
         leftPadding: 20
 
+
         background: Rectangle {
             id: borderRect
             width: parent.width

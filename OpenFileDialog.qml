@@ -12,7 +12,6 @@ FileDialog {
     property string name
 
     acceptLabel: "Select"
-    nameFilters: ["Text files (*.txt)"]
     title: "Select File"
 
 
