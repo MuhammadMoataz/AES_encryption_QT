@@ -12,6 +12,8 @@
 #include<QTemporaryFile>
 
 
+
+
 class EncryptManager : public QObject
 {
     Q_OBJECT
@@ -19,9 +21,8 @@ class EncryptManager : public QObject
 public:
     QTemporaryFile tempFile{"tempFile"};
     explicit EncryptManager(QObject *parent = nullptr);
-    Q_INVOKABLE bool encryptAES(const QByteArray& data, const QByteArray& passphrase);
-    Q_INVOKABLE bool decryptAES(const QByteArray& data, const QByteArray& passphrase);
-    void saveFile(const QByteArray& data);
+    Q_INVOKABLE bool encryptAES(QString filePath, const QByteArray& passphrase);
+    Q_INVOKABLE bool decryptAES(QString filePath, const QByteArray& passphrase);
     Q_INVOKABLE bool saveTempFile(QString filename);
 
 private:

@@ -1,28 +1,45 @@
 #include "FileManager.h"
 
 FileManager::FileManager(QObject *parent)
-    : QObject{parent}, ext{""}
+    : QObject{parent}
 {}
 
-QByteArray FileManager::readFile(QString filePath)
+void FileManager::getFileInfo(QString filePath)
 {
-    filePath = filePath.last(filePath.size() - 8);
     QFileInfo fileInfo(filePath);
-    ext = fileInfo.suffix();
-    size = fileInfo.size();
-    path = fileInfo.absoluteFilePath();
 
+    setExt(fileInfo.suffix());
+    setSize(fileInfo.size());
+    setPath(fileInfo.absoluteFilePath());
 
-    QFile file(filePath);
+}
 
-    if (!file.open(QIODevice::ReadOnly)) {
-        qCritical() << "Error opening file:" << filePath;
-        return nullptr;
-    }
+QString FileManager::getPath() const
+{
+    return m_path;
+}
 
-    QByteArray fileContent = file.readAll();
-    file.close();
+void FileManager::setPath(const QString &newPath)
+{
+    m_path = newPath;
+}
 
-    qDebug() << "File size: " << size << "File path " << path << "File ext " << ext;
-    return fileContent;
+QString FileManager::getExt() const
+{
+    return m_ext;
+}
+
+void FileManager::setExt(const QString &newExt)
+{
+    m_ext = newExt;
+}
+
+qint64 FileManager::getSize() const
+{
+    return m_size;
+}
+
+void FileManager::setSize(qint64 newSize)
+{
+    m_size = newSize;
 }

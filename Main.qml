@@ -5,7 +5,6 @@ import QtQuick.Layouts
 import QtQuick.Dialogs
 import untitled
 
-
 ApplicationWindow {
     id: root
     visible: true
@@ -15,11 +14,20 @@ ApplicationWindow {
 
     property bool encryptFlag: true
 
+    Text {
+        id: fileStatusText
+        text: "Please upload your file"
+        topPadding: 10
+        anchors.horizontalCenter: parent.horizontalCenter
+        font.family: "Body"
+        font.weight: Font.Medium
+    }
+
     RowLayout {
         id: buttonsLayout
         width: parent.width - 40
         anchors.margins: 20
-        anchors.top: parent.top
+        anchors.top: fileStatusText.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 10
 
@@ -44,9 +52,14 @@ ApplicationWindow {
             }
 
             onClicked: {
-                encryptFlag = true
-                openFileDialog.nameFilters = ["Text files (*.txt)"]
-                openFileDialog.open()
+                if(password.validPassword) {
+                    encryptFlag = true
+                    openFileDialog.nameFilters = ["Plain files (*.*)"]
+                    openFileDialog.open()
+                } else {
+                    helperText.text = "Please enter your Password!"
+                    helperText.color = "red"
+                }
             }
 
         }
@@ -70,10 +83,14 @@ ApplicationWindow {
                 font.weight: Font.Medium
             }
             onClicked: {
-                encryptFlag = false
-                openFileDialog.nameFilters = ["Enc files (*.enc)"]
-                openFileDialog.open()
-
+                if (password.validPassword) {
+                    encryptFlag = false
+                    openFileDialog.nameFilters = ["Enc files (*.enc)"]
+                    openFileDialog.open()
+                } else {
+                    helperText.text = "Please enter your Password!"
+                    helperText.color = "red"
+                }
             }
 
         }
@@ -105,14 +122,39 @@ ApplicationWindow {
 
         OpenFileDialog {
             id: openFileDialog
-            nameFilters: {
+            onAccepted: { 
+                var fullPath = openFileDialog.selectedFile.toString()
+                var file = fullPath.replace(/^(file:\/{3})/,"")
+                console.log("selected file " + file)
 
-                ["Text files (*.txt)"]
-            }
-            onAccepted: {
-                console.log("selected file " + openFileDialog.selectedFile)
+                //Update: show file info
+                fileManager.getFileInfo(file)
+                var ext = fileManager.getExt()
+                var path = fileManager.getPath()
+                var size = fileManager.getSize()
+
+
+                /* validate file extension in the encryption operation */
+                var validFileExt = true
+                if (encryptFlag)
+                    validFileExt = validateFileExt(ext)
+
+                if (!validFileExt) {
+                    fileStatusText.text = "Cannot encrypt already encrypted file"
+                    return
+                }
+
+
+                console.log("file ext " + ext)
+                console.log("file path " + path)
+                console.log("file size " + size)
+
+                fileStatusText.text = "File : " + path + " File size: " + size/1024 +" KB"
+
+
+
+
                 // call the encryption / decryption method according to the flag
-                var file = fileManager.readFile(openFileDialog.selectedFile)
                 if (encryptFlag) {
                     encryptManager.encryptAES(file, password.text)
                     save.enabled = true
@@ -135,6 +177,7 @@ ApplicationWindow {
             fileMode: FileDialog.SaveFile
             title: "Save Output file"
             onAccepted: {
+
                 var fullPath = selectedFile.toString()
                 var path = fullPath.replace(/^(file:\/{3})/,"")
                 encryptManager.saveTempFile(path)
@@ -161,18 +204,13 @@ ApplicationWindow {
         PasswordField {
             id: password
             width: parent.width
-            // Lay
-            // Layout.alignment: parent.alignment
-            // anchors.horizontalCenter: parent.horizontalCenter
             Layout.fillWidth: true
             onTextEdited: {
 
-                passwordValidation(text)
-
-                // if (passwordValidation(text)) {
-                //     encBut.enabled = true
-                //     decBut.enabled = true
-                // }
+                if (passwordValidation(text)) {
+                    encBut.enabled = true
+                    decBut.enabled = true
+                }
 
             }
         }
@@ -181,7 +219,6 @@ ApplicationWindow {
         RowLayout {
             id: passwordIndicator
             spacing: 8
-            // anchors.left: password.left
             Rectangle {
                 id: firstIndicator
                 height: 2
@@ -204,8 +241,6 @@ ApplicationWindow {
 
         Rectangle {
             id: helperRect
-            // anchors.left: passwordInputField.left
-            // anchors.leftMargin: 20
             color: "red"
             Text {
                 id: helperText
@@ -218,7 +253,9 @@ ApplicationWindow {
     }
 
 
-
+    function validateFileExt(ext) {
+        return ext !== "enc"
+    }
 
 
 }

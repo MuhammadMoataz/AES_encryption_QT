@@ -13,6 +13,8 @@ TextField {
     leftPadding: 20
     height: 55
 
+    property bool validPassword: false
+
     function passwordValidation(password) {
 
         // check whether the password is cleared
@@ -22,6 +24,7 @@ TextField {
             thirdIndicator.color = "grey"
             helperText.text = "At least 8 characters long, 1 upper and lower case letter, 1 number and 1 special character"
             helperText.color = "grey"
+            validPassword = false
             return
         }
 
@@ -32,6 +35,7 @@ TextField {
         var regExp = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/
         if (regExp.test(password)) {
             // valid Password, Check for length 2nd Requirement
+            validPassword = true
 
             // Strong Password
             if (password.length >= 15) {
@@ -48,13 +52,13 @@ TextField {
                 helperText.color = "orange"
             }
 
-
         } else {
             firstIndicator.color = "red"
             secondIndicator.color = "light grey"
             thirdIndicator.color = "light grey"
             helperText.text = "Weak"
             helperText.color = "red"
+            validPassword = false
         }
     }
 
