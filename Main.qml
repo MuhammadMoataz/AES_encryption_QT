@@ -165,11 +165,11 @@ ApplicationWindow {
 
                     // call the encryption / decryption method according to the flag
                     if (encryptFlag) {
-                        encryptManager.encryptAES(file, password.text)
+                        encryptManager.encryptAES(file, password.text, size)
                         save.enabled = true
                     }
                     else {
-                        if (encryptManager.decryptAES(file, password.text))
+                        if (encryptManager.decryptAES(file, password.text, size))
                             save.enabled = true
                         else {
                             helperText.text = "Wrong Password!"
@@ -203,11 +203,13 @@ ApplicationWindow {
 
         ProgressBar {
             id: progressBar
-            value: 0.5
+            from: 0
+            to: 100
+            value: 25
             anchors.top: buttonsLayout.bottom
-            anchors.left: encBut.left
+            anchors.left: buttonsLayout.left
             anchors.margins: 8
-
+            anchors.leftMargin: 0
         }
     }
 
