@@ -23,182 +23,200 @@ ApplicationWindow {
         font.weight: Font.Medium
     }
 
-    RowLayout {
-        id: buttonsLayout
+    ColumnLayout {
+        id: buttons_progressbar_layout
         width: parent.width - 40
         anchors.margins: 20
         anchors.top: fileStatusText.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 10
-
-        Button {
-            id: encBut
-            width: 80
-            height: 20
-            Layout.fillWidth: true
-            Layout.minimumWidth: 80
-            Layout.preferredWidth: 100
-            Layout.maximumWidth: root.width
-            topPadding: 20
-            bottomPadding: 20
-            leftPadding: 16
-            rightPadding: 16
-            // enabled: false
-            Text {
-                anchors.centerIn: parent
-                text: "Encrypt"
-                font.family: "Body"
-                font.weight: Font.Medium
-            }
-
-            onClicked: {
-                if(password.validPassword) {
-                    encryptFlag = true
-                    openFileDialog.nameFilters = ["Plain files (*.*)"]
-                    openFileDialog.open()
-                } else {
-                    helperText.text = "Please enter your Password!"
-                    helperText.color = "red"
-                }
-            }
-
-        }
-        Button {
-            id: decBut
-            width: 80
-            height: 20
-            Layout.fillWidth: true
-            Layout.minimumWidth: 80
-            Layout.preferredWidth: 100
-            Layout.maximumWidth: root.width
-            topPadding: 20
-            bottomPadding: 20
-            leftPadding: 16
-            rightPadding: 16
-            // enabled: false
-            Text {
-                anchors.centerIn: parent
-                text: "Decrypt"
-                font.family: "Body"
-                font.weight: Font.Medium
-            }
-            onClicked: {
-                if (password.validPassword) {
-                    encryptFlag = false
-                    openFileDialog.nameFilters = ["Enc files (*.enc)"]
-                    openFileDialog.open()
-                } else {
-                    helperText.text = "Please enter your Password!"
-                    helperText.color = "red"
-                }
-            }
-
-        }
-
-        Button {
-            id: save
-            width: 80
-            height: 20
-            Layout.fillWidth: true
-            Layout.minimumWidth: 80
-            Layout.preferredWidth: 100
-            Layout.maximumWidth: 300
-            enabled: false
-            topPadding: 20
-            bottomPadding: 20
-            leftPadding: 16
-            rightPadding: 16
-            Text {
-                anchors.centerIn: parent
-                text: "Save"
-                font.family: "Body"
-                font.weight: Font.Medium
-            }
-            onClicked:{
-                saveFileDialog.open()
-            }
-
-        }
-
-        OpenFileDialog {
-            id: openFileDialog
-            onAccepted: { 
-                var fullPath = openFileDialog.selectedFile.toString()
-                var file = fullPath.replace(/^(file:\/{3})/,"")
-                console.log("selected file " + file)
-
-                //Update: show file info
-                fileManager.getFileInfo(file)
-                var ext = fileManager.getExt()
-                var path = fileManager.getPath()
-                var size = fileManager.getSize()
+        spacing: 8
 
 
-                /* validate file extension in the encryption operation */
-                var validFileExt = true
-                if (encryptFlag)
-                    validFileExt = validateFileExt(ext)
+        RowLayout {
+            id: buttonsLayout
+            width: parent.width - 40
+            anchors.margins: 20
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 10
 
-                if (!validFileExt) {
-                    fileStatusText.text = "Cannot encrypt already encrypted file"
-                    return
+            Button {
+                id: encBut
+                width: 80
+                height: 20
+                Layout.fillWidth: true
+                Layout.minimumWidth: 80
+                Layout.preferredWidth: 100
+                Layout.maximumWidth: root.width
+                topPadding: 20
+                bottomPadding: 20
+                leftPadding: 16
+                rightPadding: 16
+                // enabled: false
+                Text {
+                    anchors.centerIn: parent
+                    text: "Encrypt"
+                    font.family: "Body"
+                    font.weight: Font.Medium
                 }
 
-
-                console.log("file ext " + ext)
-                console.log("file path " + path)
-                console.log("file size " + size)
-
-                fileStatusText.text = "File : " + path + " File size: " + size/1024 +" KB"
-
-
-
-
-                // call the encryption / decryption method according to the flag
-                if (encryptFlag) {
-                    encryptManager.encryptAES(file, password.text)
-                    save.enabled = true
-                }
-                else {
-                    if (encryptManager.decryptAES(file, password.text))
-                        save.enabled = true
-                    else {
-                        helperText.text = "Wrong Password!"
+                onClicked: {
+                    if(password.validPassword) {
+                        encryptFlag = true
+                        openFileDialog.nameFilters = ["Plain files (*.*)"]
+                        openFileDialog.open()
+                    } else {
+                        helperText.text = "Please enter your Password!"
                         helperText.color = "red"
                     }
                 }
+
             }
-        }
+            Button {
+                id: decBut
+                width: 80
+                height: 20
+                Layout.fillWidth: true
+                Layout.minimumWidth: 80
+                Layout.preferredWidth: 100
+                Layout.maximumWidth: root.width
+                topPadding: 20
+                bottomPadding: 20
+                leftPadding: 16
+                rightPadding: 16
+                // enabled: false
+                Text {
+                    anchors.centerIn: parent
+                    text: "Decrypt"
+                    font.family: "Body"
+                    font.weight: Font.Medium
+                }
+                onClicked: {
+                    if (password.validPassword) {
+                        encryptFlag = false
+                        openFileDialog.nameFilters = ["Enc files (*.enc)"]
+                        openFileDialog.open()
+                    } else {
+                        helperText.text = "Please enter your Password!"
+                        helperText.color = "red"
+                    }
+                }
 
-
-        FileDialog {
-            id: saveFileDialog
-            acceptLabel: "Save"
-            fileMode: FileDialog.SaveFile
-            title: "Save Output file"
-            onAccepted: {
-
-                var fullPath = selectedFile.toString()
-                var path = fullPath.replace(/^(file:\/{3})/,"")
-                encryptManager.saveTempFile(path)
-                save.enabled = false
             }
+
+            Button {
+                id: save
+                width: 80
+                height: 20
+                Layout.fillWidth: true
+                Layout.minimumWidth: 80
+                Layout.preferredWidth: 100
+                Layout.maximumWidth: 300
+                enabled: false
+                topPadding: 20
+                bottomPadding: 20
+                leftPadding: 16
+                rightPadding: 16
+                Text {
+                    anchors.centerIn: parent
+                    text: "Save"
+                    font.family: "Body"
+                    font.weight: Font.Medium
+                }
+                onClicked:{
+                    saveFileDialog.open()
+                }
+
+            }
+
+            OpenFileDialog {
+                id: openFileDialog
+                onAccepted: {
+                    var fullPath = openFileDialog.selectedFile.toString()
+                    var file = fullPath.replace(/^(file:\/{3})/,"")
+                    console.log("selected file " + file)
+
+                    //Update: show file info
+                    fileManager.getFileInfo(file)
+                    var ext = fileManager.getExt()
+                    var path = fileManager.getPath()
+                    var size = fileManager.getSize()
+
+
+                    /* validate file extension in the encryption operation */
+                    var validFileExt = true
+                    if (encryptFlag)
+                        validFileExt = validateFileExt(ext)
+
+                    if (!validFileExt) {
+                        fileStatusText.text = "Cannot encrypt already encrypted file"
+                        return
+                    }
+
+
+                    console.log("file ext " + ext)
+                    console.log("file path " + path)
+                    console.log("file size " + size)
+
+                    fileStatusText.text = "File : " + path + " File size: " + size/1024 +" KB"
+
+
+
+
+                    // call the encryption / decryption method according to the flag
+                    if (encryptFlag) {
+                        encryptManager.encryptAES(file, password.text)
+                        save.enabled = true
+                    }
+                    else {
+                        if (encryptManager.decryptAES(file, password.text))
+                            save.enabled = true
+                        else {
+                            helperText.text = "Wrong Password!"
+                            helperText.color = "red"
+                        }
+                    }
+                }
+            }
+
+
+            FileDialog {
+                id: saveFileDialog
+                acceptLabel: "Save"
+                fileMode: FileDialog.SaveFile
+                title: "Save Output file"
+                onAccepted: {
+
+                    var fullPath = selectedFile.toString()
+                    var path = fullPath.replace(/^(file:\/{3})/,"")
+                    encryptManager.saveTempFile(path)
+                    save.enabled = false
+                }
+            }
+
+
+            FileManager {
+                id: fileManager
+            }
+
         }
 
+        ProgressBar {
+            id: progressBar
+            value: 0.5
+            anchors.top: buttonsLayout.bottom
+            anchors.left: encBut.left
+            anchors.margins: 8
 
-        FileManager {
-            id: fileManager
         }
-
     }
-
 
     ColumnLayout {
         id: passwordLayout
         width: parent.width - 40
-        anchors.margins: 20
-        anchors.top: buttonsLayout.bottom
-        anchors.horizontalCenter: buttonsLayout.horizontalCenter
+        anchors.margins: 30
+        anchors.top: buttons_progressbar_layout.bottom
+        anchors.horizontalCenter: buttons_progressbar_layout.horizontalCenter
         spacing: 8
 
         PasswordField {

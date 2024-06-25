@@ -24,7 +24,6 @@ qt_add_qml_module(appuntitled
     QML_FILES OpenFileDialog.qml
     QML_FILES PasswordField.qml
     SOURCES EncryptManager.h EncryptManager.cpp FileManager.h FileManager.cpp
-    QML_FILES
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
