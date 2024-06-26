@@ -131,8 +131,14 @@ ApplicationWindow {
 
             OpenFileDialog {
                 id: openFileDialog
+                property bool validPassword: false
 
-
+                Connections {
+                    target: encryptManager
+                    onOperationFinished: function(valid) {
+                        validPassword: valid
+                    }
+                }
 
                 onAccepted: {
                     var fullPath = openFileDialog.selectedFile.toString()
@@ -162,18 +168,19 @@ ApplicationWindow {
                     console.log("file size " + size)
 
                     fileStatusText.text = "File : " + path +
-                            " File size: " + size/1024 +" KB " + "File Type: " + fileManager.mimeType(file)
+                            ", File size: " + size/1024 +" KB, " + "File Type: " + fileManager.mimeType(file)
 
 
 
 
                     // call the encryption / decryption method according to the flag
                     if (encryptFlag) {
-                        startEnc(file, password.text, size)
+                        encryptManager.encryptSlot(file, password.text, size)
                         save.enabled = true
                     }
                     else {
-                        if (encryptManager.decryptAES(file, password.text, size))
+                        encryptManager.decryptSlot(file, password.text, size)
+                        if (validPassword)
                             save.enabled = true
                         else {
                             helperText.text = "Wrong Password!"

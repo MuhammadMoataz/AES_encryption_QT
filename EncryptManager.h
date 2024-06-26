@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QDebug>
 #include <QFile>
+#include <thread>
 #include <openssl/evp.h>
 #include <openssl/rand.h>
 #include <openssl/err.h>
@@ -28,17 +29,22 @@ public:
     int progress() const;
 
 private:
+    int m_progress;
     QByteArray password;
+
     void setPassword(const QByteArray& _password);
     void setProgress(int progress);
-    int m_progress;
+    void encryptAES(QString filePath, const QByteArray& passphrase, qint64 size);
+    void decryptAES(QString filePath, const QByteArray& passphrase, qint64 size);
 
 public slots:
-    bool encryptAES(QString filePath, const QByteArray& passphrase, qint64 size);
-    bool decryptAES(QString filePath, const QByteArray& passphrase, qint64 size);
+
+    void encryptSlot(QString filePath, const QByteArray& passphrase, qint64 size);
+    void decryptSlot(QString filePath, const QByteArray& passphrase, qint64 size);
 
 signals:
     void progressChanged(int progress);
+    void operationFinished(bool valid);
 };
 
 #endif // ENCRYPTMANAGER_H
