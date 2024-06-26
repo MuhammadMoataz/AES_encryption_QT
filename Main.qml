@@ -189,6 +189,7 @@ ApplicationWindow {
 
                     var fullPath = selectedFile.toString()
                     var path = fullPath.replace(/^(file:\/{3})/,"")
+                    // TODO
                     encryptManager.saveTempFile(path)
                     save.enabled = false
                 }
@@ -205,11 +206,12 @@ ApplicationWindow {
             id: progressBar
             from: 0
             to: 100
-            value: 25
+            value: 0
             anchors.top: buttonsLayout.bottom
             anchors.left: buttonsLayout.left
             anchors.margins: 8
             anchors.leftMargin: 0
+
         }
     }
 
@@ -275,6 +277,10 @@ ApplicationWindow {
 
     function validateFileExt(ext) {
         return ext !== "enc"
+    }
+
+    function updateProgress(progress) {
+        progressBar.value = progress
     }
 
 
