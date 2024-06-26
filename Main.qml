@@ -131,6 +131,9 @@ ApplicationWindow {
 
             OpenFileDialog {
                 id: openFileDialog
+
+
+
                 onAccepted: {
                     var fullPath = openFileDialog.selectedFile.toString()
                     var file = fullPath.replace(/^(file:\/{3})/,"")
@@ -158,14 +161,15 @@ ApplicationWindow {
                     console.log("file path " + path)
                     console.log("file size " + size)
 
-                    fileStatusText.text = "File : " + path + " File size: " + size/1024 +" KB"
+                    fileStatusText.text = "File : " + path +
+                            " File size: " + size/1024 +" KB " + "File Type: " + fileManager.mimeType(file)
 
 
 
 
                     // call the encryption / decryption method according to the flag
                     if (encryptFlag) {
-                        encryptManager.encryptAES(file, password.text, size)
+                        startEnc(file, password.text, size)
                         save.enabled = true
                     }
                     else {

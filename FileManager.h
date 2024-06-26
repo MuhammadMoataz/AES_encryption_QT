@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <qqml.h>
 #include <QFileInfo>
+#include <QMimeDatabase>
 
 class FileManager : public QObject
 {
@@ -16,6 +17,7 @@ class FileManager : public QObject
     Q_PROPERTY(QString path READ getPath WRITE setPath)
 public:
     explicit FileManager(QObject *parent = nullptr);
+    Q_INVOKABLE QString mimeType(const QString &filePath);
     Q_INVOKABLE void getFileInfo(QString filePath);
     Q_INVOKABLE QString getPath() const;
     void setPath(const QString &newPath);

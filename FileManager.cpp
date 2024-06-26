@@ -4,6 +4,11 @@ FileManager::FileManager(QObject *parent)
     : QObject{parent}
 {}
 
+QString FileManager::mimeType(const QString &filePath)
+{
+    return QMimeDatabase().mimeTypeForFile( filePath ).name();
+}
+
 void FileManager::getFileInfo(QString filePath)
 {
     QFileInfo fileInfo(filePath);

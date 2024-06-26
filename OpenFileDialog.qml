@@ -6,6 +6,9 @@ import untitled
 
 FileDialog {
     id: openFileDialog
+    objectName: "openFileDialog"
+
+    signal startEnc(string file,string password,int size)
 
     property string path
     property string size
