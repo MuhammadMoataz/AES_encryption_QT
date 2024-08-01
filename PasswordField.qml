@@ -12,7 +12,7 @@ TextField {
     rightPadding: 20
     leftPadding: 20
     height: 55
-
+    signal changePwIndicatorColor (string color)
     property bool validPassword: false
 
     function passwordValidation(password) {
@@ -120,6 +120,12 @@ TextField {
 
         passwordValidation(text)
 
+    }
+
+    onChangePwIndicatorColor: {
+        firstIndicator.color = color
+        secondIndicator.color = color
+        thirdIndicator.color = color
     }
 }
 

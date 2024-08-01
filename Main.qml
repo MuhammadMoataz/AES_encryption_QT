@@ -74,9 +74,10 @@ ApplicationWindow {
                 text: "Encrypt"
 
                 onClicked: {
-                    if (password.validPassword)
+                    if (password.validPassword) {
+                        password.text = ""
                         encryptManager.encryptSlot(buttonsLayout.filePath, password, buttonsLayout.size)
-                    else {
+                    } else {
                         helperText.text = "Please enter your Password!"
                         helperText.color = "red"
                     }
@@ -94,6 +95,7 @@ ApplicationWindow {
 
                 onClicked: {
                     if (password.validPassword) {
+                        password.text = ""
                         encryptManager.decryptSlot(buttonsLayout.filePath, password, buttonsLayout.size)
                     } else {
                         helperText.text = "Please enter your Password!"
@@ -113,17 +115,18 @@ ApplicationWindow {
                     target: encryptManager
                     onOperationFinished: function(valid) {
                         openFileDialog.validPassword = valid
-                        password.text = ""
                         if (valid) {
                             helperText.text = "Success!!"
                             helperText.color = "green"
                             encBut.enabled = false
                             decBut.enabled = false
+                            password.changePwIndicatorColor("green")
                         } else {
                             helperText.text = "Wrong Password!"
                             helperText.color = "red"
                             encBut.enabled = false
                             decBut.enabled = false
+                            password.changePwIndicatorColor("red")
                         }
                     }
 
@@ -132,7 +135,7 @@ ApplicationWindow {
                         helperText.color = "red"
                         decBut.enabled = false
                         progressBar.value = 0
-                        password.text = ""
+                        password.changePwIndicatorColor("red")
                     }
 
                     onEncryptionAborted: {
@@ -140,7 +143,7 @@ ApplicationWindow {
                         helperText.color = "red"
                         encBut.enabled = false
                         progressBar.value = 0
-                        password.text = ""
+                        password.changePwIndicatorColor("red")
                     }
 
                     onEncryptionChecked: function(isEncrypted) {
