@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include <QQmlContext>
+#include <QQuickView>
 #include "EncryptManager.h"
 
 int main(int argc, char *argv[])
@@ -15,6 +16,7 @@ int main(int argc, char *argv[])
         QObject *rootObject = engine.rootObjects().first();
         QMetaObject::invokeMethod(rootObject, "updateProgress", Q_ARG(QVariant, progress));
     });
+
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,

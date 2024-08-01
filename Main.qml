@@ -9,18 +9,21 @@ ApplicationWindow {
     id: root
     visible: true
     title: qsTr("Ur Encryptor")
-    width: 500
+    width: 900
     height: 300
 
     property bool encryptFlag: true
 
+
     Text {
         id: fileStatusText
-        text: "Please upload your file"
+        text: "Please select your file"
         topPadding: 10
+        elide: Text.ElideRight
         anchors.horizontalCenter: parent.horizontalCenter
         font.family: "Body"
         font.weight: Font.Medium
+        wrapMode: Text.WordWrap
     }
 
     ColumnLayout {
@@ -29,105 +32,78 @@ ApplicationWindow {
         anchors.margins: 20
         anchors.top: fileStatusText.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 8
-
-
+        spacing: 15
         RowLayout {
             id: buttonsLayout
             width: parent.width - 40
-            anchors.margins: 20
+            // anchors.margins: 20
             anchors.top: parent.top
+            anchors.left: parent.left
             anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 10
+            spacing: 20
+            property string filePath: ""
+            property int size: 0
 
-            Button {
+            CustomButton {
+                id: selectBut
+                Layout.fillWidth: true
+                Layout.minimumWidth: 100
+                Layout.preferredWidth: 150
+                Layout.maximumWidth: 300
+                text: "Select File"
+
+                onClicked:{
+                    encBut.enabled = false
+                    decBut.enabled = false
+                    progressBar.value = 0
+                    helperText.text = "Please enter your Password!"
+                    helperText.color = "red"
+                    openFileDialog.open()
+                }
+
+
+            }
+
+            CustomButton {
                 id: encBut
-                width: 80
-                height: 20
+                enabled: false
                 Layout.fillWidth: true
-                Layout.minimumWidth: 80
-                Layout.preferredWidth: 100
-                Layout.maximumWidth: root.width
-                topPadding: 20
-                bottomPadding: 20
-                leftPadding: 16
-                rightPadding: 16
-                // enabled: false
-                Text {
-                    anchors.centerIn: parent
-                    text: "Encrypt"
-                    font.family: "Body"
-                    font.weight: Font.Medium
-                }
+                Layout.minimumWidth: 100
+                Layout.preferredWidth: 150
+                Layout.maximumWidth: 300
+                text: "Encrypt"
 
                 onClicked: {
-                    if(password.validPassword) {
-                        encryptFlag = true
-                        openFileDialog.nameFilters = ["Plain files (*.*)"]
-                        openFileDialog.open()
-                    } else {
+                    if (password.validPassword)
+                        encryptManager.encryptSlot(buttonsLayout.filePath, password, buttonsLayout.size)
+                    else {
                         helperText.text = "Please enter your Password!"
                         helperText.color = "red"
                     }
                 }
 
             }
-            Button {
+            CustomButton {
                 id: decBut
-                width: 80
-                height: 20
                 Layout.fillWidth: true
-                Layout.minimumWidth: 80
-                Layout.preferredWidth: 100
-                Layout.maximumWidth: root.width
-                topPadding: 20
-                bottomPadding: 20
-                leftPadding: 16
-                rightPadding: 16
-                // enabled: false
-                Text {
-                    anchors.centerIn: parent
-                    text: "Decrypt"
-                    font.family: "Body"
-                    font.weight: Font.Medium
-                }
-                onClicked: {
-                    if (password.validPassword) {
-                        encryptFlag = false
-                        openFileDialog.nameFilters = ["Enc files (*.enc)"]
-                        openFileDialog.open()
-                    } else {
-                        helperText.text = "Please enter your Password!"
-                        helperText.color = "red"
-                    }
-                }
-
-            }
-
-            Button {
-                id: save
-                width: 80
-                height: 20
-                Layout.fillWidth: true
-                Layout.minimumWidth: 80
-                Layout.preferredWidth: 100
+                Layout.minimumWidth: 100
+                Layout.preferredWidth: 150
                 Layout.maximumWidth: 300
                 enabled: false
-                topPadding: 20
-                bottomPadding: 20
-                leftPadding: 16
-                rightPadding: 16
-                Text {
-                    anchors.centerIn: parent
-                    text: "Save"
-                    font.family: "Body"
-                    font.weight: Font.Medium
-                }
-                onClicked:{
-                    saveFileDialog.open()
+                text: "Decrypt"
+
+                onClicked: {
+                    if (password.validPassword) {
+                        encryptManager.decryptSlot(buttonsLayout.filePath, password, buttonsLayout.size)
+                    } else {
+                        helperText.text = "Please enter your Password!"
+                        helperText.color = "red"
+                    }
                 }
 
             }
+
+
 
             OpenFileDialog {
                 id: openFileDialog
@@ -136,7 +112,49 @@ ApplicationWindow {
                 Connections {
                     target: encryptManager
                     onOperationFinished: function(valid) {
-                        validPassword: valid
+                        openFileDialog.validPassword = valid
+                        password.text = ""
+                        if (valid) {
+                            helperText.text = "Success!!"
+                            helperText.color = "green"
+                            encBut.enabled = false
+                            decBut.enabled = false
+                        } else {
+                            helperText.text = "Wrong Password!"
+                            helperText.color = "red"
+                            encBut.enabled = false
+                            decBut.enabled = false
+                        }
+                    }
+
+                    onDecryptionAborted: {
+                        helperText.text = "Decryption Error!!"
+                        helperText.color = "red"
+                        decBut.enabled = false
+                        progressBar.value = 0
+                        password.text = ""
+                    }
+
+                    onEncryptionAborted: {
+                        helperText.text = "Encryption Error!!"
+                        helperText.color = "red"
+                        encBut.enabled = false
+                        progressBar.value = 0
+                        password.text = ""
+                    }
+
+                    onEncryptionChecked: function(isEncrypted) {
+                        if (isEncrypted === true) {
+                            encBut.enabled = false
+                            decBut.enabled = true
+                            saveFileDialog.nameFilters = ["All files (*.*)"]
+
+                        }
+                        else if(isEncrypted === false) {
+                            encBut.enabled = true
+                            decBut.enabled = false
+                            saveFileDialog.nameFilters = ["Enc files (*.enc)"]
+                        }
                     }
                 }
 
@@ -152,42 +170,18 @@ ApplicationWindow {
                     var size = fileManager.getSize()
 
 
-                    /* validate file extension in the encryption operation */
-                    var validFileExt = true
-                    if (encryptFlag)
-                        validFileExt = validateFileExt(ext)
-
-                    if (!validFileExt) {
-                        fileStatusText.text = "Cannot encrypt already encrypted file"
-                        return
-                    }
-
-
                     console.log("file ext " + ext)
                     console.log("file path " + path)
                     console.log("file size " + size)
 
                     fileStatusText.text = "File : " + path +
-                            ", File size: " + size/1024 +" KB, " + "File Type: " + fileManager.mimeType(file)
-
-
-
-
-                    // call the encryption / decryption method according to the flag
-                    if (encryptFlag) {
-                        encryptManager.encryptSlot(file, password.text, size)
-                        save.enabled = true
-                    }
-                    else {
-                        encryptManager.decryptSlot(file, password.text, size)
-                        if (validPassword)
-                            save.enabled = true
-                        else {
-                            helperText.text = "Wrong Password!"
-                            helperText.color = "red"
-                        }
-                    }
+                            ", File size: " + formatFileSize(size) +", " + "File Type: " + fileManager.mimeType(file)
+                    buttonsLayout.filePath = path
+                    buttonsLayout.size = size
+                    encryptManager.isEncryptedFile(path)
+                    saveFileDialog.open()
                 }
+
             }
 
 
@@ -201,8 +195,7 @@ ApplicationWindow {
                     var fullPath = selectedFile.toString()
                     var path = fullPath.replace(/^(file:\/{3})/,"")
                     // TODO
-                    encryptManager.saveTempFile(path)
-                    save.enabled = false
+                    encryptManager.setFilePath(path)
                 }
             }
 
@@ -218,12 +211,78 @@ ApplicationWindow {
             from: 0
             to: 100
             value: 0
-            anchors.top: buttonsLayout.bottom
-            anchors.left: buttonsLayout.left
-            anchors.margins: 8
-            anchors.leftMargin: 0
+            Layout.fillWidth: true
+
+            // anchors.top: buttonsLayout.bottom
+            // anchors.left: buttonsLayout.left
+            // anchors.margins: 8
+            // anchors.leftMargin: 0
+        }
+
+
+
+
+        Item {
+            width: parent.width
+            Layout.fillWidth: true
+            ColumnLayout {
+                width: parent.width
+                spacing: 4
+
+                PasswordField {
+                    id: password
+                    width: parent.width
+                    Layout.fillWidth: true
+                    onTextEdited: {
+
+                        if (passwordValidation(text)) {
+                            encBut.enabled = true
+                            decBut.enabled = true
+                        }
+
+                    }
+                }
+
+
+                RowLayout {
+                    id: passwordIndicator
+                    spacing: 8
+                    Rectangle {
+                        id: firstIndicator
+                        height: 2
+                        Layout.fillWidth: true
+                        color: "light grey"
+                    }
+                    Rectangle {
+                        id: secondIndicator
+                        height: 2
+                        Layout.fillWidth: true
+                        color: "light grey"
+                    }
+                    Rectangle {
+                        id: thirdIndicator
+                        height: 2
+                        Layout.fillWidth: true
+                        color: "light grey"
+                    }
+                }
+
+                Rectangle {
+                    id: helperRect
+                    color: "red"
+                    Text {
+                        id: helperText
+                        text: qsTr("At least 8 characters long, 1 upper and lower case letter, 1 number and 1 special character")
+                        color: "grey"
+                    }
+
+                }
+            }
+
 
         }
+
+
     }
 
     ColumnLayout {
@@ -234,54 +293,7 @@ ApplicationWindow {
         anchors.horizontalCenter: buttons_progressbar_layout.horizontalCenter
         spacing: 8
 
-        PasswordField {
-            id: password
-            width: parent.width
-            Layout.fillWidth: true
-            onTextEdited: {
 
-                if (passwordValidation(text)) {
-                    encBut.enabled = true
-                    decBut.enabled = true
-                }
-
-            }
-        }
-
-
-        RowLayout {
-            id: passwordIndicator
-            spacing: 8
-            Rectangle {
-                id: firstIndicator
-                height: 2
-                Layout.fillWidth: true
-                color: "light grey"
-            }
-            Rectangle {
-                id: secondIndicator
-                height: 2
-                Layout.fillWidth: true
-                color: "light grey"
-            }
-            Rectangle {
-                id: thirdIndicator
-                height: 2
-                Layout.fillWidth: true
-                color: "light grey"
-            }
-        }
-
-        Rectangle {
-            id: helperRect
-            color: "red"
-            Text {
-                id: helperText
-                text: qsTr("At least 8 characters long, 1 upper and lower case letter, 1 number and 1 special character")
-                color: "grey"
-            }
-
-        }
 
     }
 
@@ -292,6 +304,18 @@ ApplicationWindow {
 
     function updateProgress(progress) {
         progressBar.value = progress
+    }
+
+    function formatFileSize(size) {
+        const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        let unitIndex = 0;
+
+        while (size >= 1024 && unitIndex < units.length - 1) {
+            size /= 1024;
+            unitIndex++;
+        }
+
+        return `${size.toFixed(2)} ${units[unitIndex]}`;
     }
 
 
